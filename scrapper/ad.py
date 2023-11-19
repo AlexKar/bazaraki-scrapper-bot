@@ -20,6 +20,8 @@ class Ad:
     price: str
     title: str
     url: str
+    model: str
+    brand: str
 
     def __str__(self) -> str:
         return (

@@ -23,7 +23,9 @@ class Scrapper:
             location=self._extract_location(announcement),
             price=self._extract_price(announcement),
             title=self._extract_title(announcement),
-            url=f"www.bazaraki.com{_url}"
+            url=f"www.bazaraki.com{_url}",
+            model=self._extract_model(announcement),
+            brand=self._extract_brand(announcement)
         )
 
     @staticmethod
@@ -60,5 +62,31 @@ class Scrapper:
                 .find("div", attrs={"class": "announcement-block-text-container announcement-block__text-container"}) \
                 .find("div", attrs={"class": "announcement-block__date"}).text
             return re.search("(\d+)[.](\d+)[.](\d+).(\d+:\d+)|\w+.(\d+:\d+)", date).group(0)
+        except AttributeError:
+            return ""
+    
+    @staticmethod
+    def _extract_model(announcement) -> str:
+        try:
+            content = announcement.find("div", attrs={"class": "announcement-block__breadcrumbs"}).text
+            content = content.replace("<span>","")
+            content = content.replace("</span>","")
+            content = re.sub(r"[\n\t\s]*", "", content)
+            items = content.split("»")
+            return items[1]
+
+        except AttributeError:
+            return ""
+        
+    @staticmethod
+    def _extract_brand(announcement) -> str:
+        try:
+            content = announcement.find("div", attrs={"class": "announcement-block__breadcrumbs"}).text
+            content = content.replace("<span>","")
+            content = content.replace("</span>","")
+            content = re.sub(r"[\n\t\s]*", "", content)
+            items = content.split("»")
+            return items[0]
+
         except AttributeError:
             return ""
